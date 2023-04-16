@@ -1,15 +1,16 @@
 package com.kb.mapd721_p1_krisuvbohara_sarthakvasistha.view;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.kb.mapd721_p1_krisuvbohara_sarthakvasistha.R;
+import com.kb.mapd721_p1_krisuvbohara_sarthakvasistha.service.ChatService;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,6 +27,13 @@ import java.util.Locale;
 
 public class MainFormActivity extends AppCompatActivity implements OnMapReadyCallback {
     TextView address;
+    Button button;
+    EditText name;
+
+    Double lat;
+    Double lng;
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,6 +45,27 @@ public class MainFormActivity extends AppCompatActivity implements OnMapReadyCal
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
         address = findViewById(R.id.addressName);
+        name = findViewById(R.id.editTextTextPersonName);
+        button = findViewById(R.id.main_form_button);
+
+        button.setOnClickListener(view -> {
+            String value = name.getText().toString();
+            String add = name.getText().toString();
+
+            if(value.matches("")){
+                Toast.makeText(this, "Name Required",
+                        Toast.LENGTH_LONG).show();
+            }else if(lat == null){
+                Toast.makeText(this, "Location Not Set",
+                        Toast.LENGTH_LONG).show();
+            }else{
+                try {
+//                    viewModel.insertData(word);
+                }catch (IllegalArgumentException e){
+                    Log.e(e.toString(),"s");
+                }
+            }
+        });
     }
 
     @Override
@@ -46,6 +76,9 @@ public class MainFormActivity extends AppCompatActivity implements OnMapReadyCal
         googleMap.animateCamera(cameraUpdate);
         googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         googleMap.setOnMapClickListener(latLng -> {
+            Intent intent = new Intent(MainFormActivity.this, ChatService.class);
+//            intent.putExtras(data);
+            MainFormActivity.this.startService(intent);
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
             markerOptions.title(getAddress(latLng));
@@ -55,6 +88,8 @@ public class MainFormActivity extends AppCompatActivity implements OnMapReadyCal
             googleMap.animateCamera(location);
             googleMap.addMarker(markerOptions);
             address.setText(getAddress(latLng));
+            lat = latLng.latitude;
+            lng = latLng.longitude;
         });
     }
 

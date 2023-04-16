@@ -6,6 +6,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
 
     <application
         android:allowBackup="true"
@@ -15,8 +19,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MAPD721P1KrisuvBoharaSarthakVasistha"
-        tools:targetApi="31" >
+        android:theme="@style/Theme.MAPD721P1KrisuvBoharaSarthakVasistha">
+
+        <service
+            android:name=".service.ChatService"
+            android:enabled="true" />
 
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyB8HZG30Vs2l7AyxnjvNKh1t0sMZFhuKio"/>
