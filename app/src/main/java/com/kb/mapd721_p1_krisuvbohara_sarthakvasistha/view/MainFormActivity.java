@@ -128,7 +128,7 @@ public class MainFormActivity extends AppCompatActivity implements OnMapReadyCal
             public void run() {
                 List<MapEntity> todoList = MapDatabase.getInstance(getApplicationContext())
                         .mapDao().getAll();
-                System.out.println( todoList.size());
+
             }
         });
             thread.start();
