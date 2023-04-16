@@ -2,8 +2,10 @@ package com.kb.mapd721_p1_krisuvbohara_sarthakvasistha.view;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -19,6 +21,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.kb.mapd721_p1_krisuvbohara_sarthakvasistha.R;
+import com.kb.mapd721_p1_krisuvbohara_sarthakvasistha.database.MapDatabase;
+import com.kb.mapd721_p1_krisuvbohara_sarthakvasistha.database.MapEntity;
 import com.kb.mapd721_p1_krisuvbohara_sarthakvasistha.service.ChatService;
 
 import java.io.IOException;
@@ -53,6 +57,7 @@ public class MainFormActivity extends AppCompatActivity implements OnMapReadyCal
             String add = name.getText().toString();
 
             if(value.matches("")){
+                getAllTodos(view);
                 Toast.makeText(this, "Name Required",
                         Toast.LENGTH_LONG).show();
             }else if(lat == null){
@@ -60,7 +65,11 @@ public class MainFormActivity extends AppCompatActivity implements OnMapReadyCal
                         Toast.LENGTH_LONG).show();
             }else{
                 try {
-//                    viewModel.insertData(word);
+                    MapEntity entity = new MapEntity(value, add,lat,lng);
+                    InsertAsyncTask insertAsyncTask = new InsertAsyncTask();
+                    insertAsyncTask.execute(entity);
+                    getAllTodos(view);
+
                 }catch (IllegalArgumentException e){
                     Log.e(e.toString(),"s");
                 }
@@ -113,4 +122,27 @@ public class MainFormActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
+    public void getAllTodos(View view) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<MapEntity> todoList = MapDatabase.getInstance(getApplicationContext())
+                        .mapDao().getAll();
+                System.out.println( todoList.size());
+            }
+        });
+            thread.start();
+    }
+
+    class InsertAsyncTask extends AsyncTask<MapEntity, Void, Void> {
+    @Override
+    protected Void doInBackground(MapEntity... model) {
+
+        MapDatabase.getInstance(getApplicationContext()).mapDao().insert(model[0]);
+        return null;
+    }
+    }
+
+
 }
+
